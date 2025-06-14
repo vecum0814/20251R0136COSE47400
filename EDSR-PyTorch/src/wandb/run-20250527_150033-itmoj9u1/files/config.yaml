@@ -1,0 +1,151 @@
+_wandb:
+    value:
+        cli_version: 0.19.11
+        m: []
+        python_version: 3.10.13
+        t:
+            "1":
+                - 1
+                - 41
+                - 49
+                - 55
+                - 63
+            "2":
+                - 1
+                - 41
+                - 49
+                - 55
+                - 63
+            "3":
+                - 13
+                - 23
+                - 55
+            "4": 3.10.13
+            "5": 0.19.11
+            "8":
+                - 5
+            "12": 0.19.11
+            "13": linux-x86_64
+G0:
+    value: 64
+RDNconfig:
+    value: B
+RDNkSize:
+    value: 3
+act:
+    value: relu
+batch_size:
+    value: 16
+betas:
+    value:
+        - 0.9
+        - 0.999
+chop:
+    value: false
+cpu:
+    value: false
+data_range:
+    value: 1-800/801-810
+data_test:
+    value:
+        - DIV2KCustom
+data_train:
+    value:
+        - DIV2KCustom
+debug:
+    value: false
+decay:
+    value: "200"
+dilation:
+    value: false
+dir_data:
+    value: /home/elicer/content/data
+dir_demo:
+    value: ../test
+epochs:
+    value: 10
+epsilon:
+    value: 1e-08
+ext:
+    value: sep
+extend:
+    value: .
+gamma:
+    value: 0.5
+gan_k:
+    value: 1
+gclip:
+    value: 0
+load:
+    value: ""
+loss:
+    value: 1*L1
+lr:
+    value: 0.0001
+model:
+    value: transformer_sr_shiftedattn
+momentum:
+    value: 0.9
+n_GPUs:
+    value: 1
+n_colors:
+    value: 3
+n_feats:
+    value: 64
+n_resblocks:
+    value: 16
+n_resgroups:
+    value: 10
+n_threads:
+    value: 6
+no_augment:
+    value: false
+optimizer:
+    value: ADAM
+patch_size:
+    value: 96
+pre_train:
+    value: ""
+precision:
+    value: single
+print_every:
+    value: 100
+reduction:
+    value: 16
+res_scale:
+    value: 1
+reset:
+    value: false
+resume:
+    value: 0
+rgb_range:
+    value: 255
+save:
+    value: TransformerSR_ShiftedWindowAttention_x4_custom
+save_gt:
+    value: false
+save_models:
+    value: false
+save_results:
+    value: false
+scale:
+    value:
+        - 4
+seed:
+    value: 1
+self_ensemble:
+    value: false
+shift_mean:
+    value: true
+skip_threshold:
+    value: 1e+08
+split_batch:
+    value: 1
+template:
+    value: .
+test_every:
+    value: 1000
+test_only:
+    value: false
+weight_decay:
+    value: 0

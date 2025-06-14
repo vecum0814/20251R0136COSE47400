@@ -114,7 +114,7 @@ class Model(nn.Module):
         if load_from:
             self.model.load_state_dict(load_from, strict=False)
 
-    def forward_chop(self, *args, shave=10, min_size=160000):
+    def forward_chop(self, *args, shave=20, min_size=40000):
         scale = 1 if self.input_large else self.scale[self.idx_scale]
         n_GPUs = min(self.n_GPUs, 4)
         # height, width

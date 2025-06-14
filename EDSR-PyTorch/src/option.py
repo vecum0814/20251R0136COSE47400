@@ -143,6 +143,16 @@ parser.add_argument('--save_results', action='store_true',
 parser.add_argument('--save_gt', action='store_true',
                     help='save low-resolution and high-resolution images together')
 
+parser.add_argument('--rfdn_ckpt', type=str,
+                    default='../experiment/RFDN_x4_custom/model/model_best.pt',
+                    help='pre‑trained RFDN checkpoint')
+parser.add_argument('--transformerSR_ckpt', type=str,
+                    default='../experiment/TransformerSR_x4_custom/model/model_best.pt',
+                    help='pre‑trained TransformerSR checkpoint')
+parser.add_argument('--fusion_ch', type=int, default=64,
+                    help='output channels of 1×1 fusion conv')
+
+
 args = parser.parse_args()
 template.set_template(args)
 

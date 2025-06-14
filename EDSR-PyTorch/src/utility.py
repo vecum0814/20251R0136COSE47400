@@ -53,6 +53,7 @@ class checkpoint():
         self.args = args
         self.ok = True
         self.log = torch.Tensor()
+        self.queue = Queue()
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
 
         if not args.load:

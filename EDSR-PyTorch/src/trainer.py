@@ -66,17 +66,18 @@ class Trainer():
 
     def test(self):
         torch.set_grad_enabled(False)
+        torch.cuda.empty_cache()  # 평가 시작 전에 GPU 캐시 비우기 명시적 호출
+        
+        self.model.eval()
+        self.ckp.begin_background()
 
         epoch = self.optimizer.get_last_epoch()
         self.ckp.write_log('\nEvaluation:')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
-        self.model.eval()
 
         timer_test = utility.timer()
-        if self.args.save_results:
-            self.ckp.begin_background()
 
         avg_psnr = 0
         num_samples = 0
@@ -115,13 +116,13 @@ class Trainer():
                 wandb.log({'Test/PSNR': avg_psnr, 'Epoch': epoch})
 
         self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
-
-        if self.args.save_results:
-            self.ckp.end_background()
+        
+        self.ckp.end_background()
 
         if not self.args.test_only:
             self.ckp.save(self, epoch, is_best=True)
 
+        torch.cuda.empty_cache()  # 평가 후 메모리 정리
         torch.set_grad_enabled(True)
 
     def prepare(self, *args):

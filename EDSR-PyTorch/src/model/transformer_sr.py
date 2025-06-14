@@ -110,6 +110,63 @@ class TransformerSR(nn.Module):
             trunc_normal_(m.weight, std=.02)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
+                
+    def forward_features(self, x):
+        """
+        입력 x (LR 이미지) → Stage3 종료 시점의 feature map 반환
+        shape: (B, C, H//4, W//4)  # C = self.embed_dim = 64
+        """
+        B, C, H, W = x.shape
+        pad_h = (4 - H % 4) % 4
+        pad_w = (4 - W % 4) % 4
+        if pad_h or pad_w:
+            x = nn.functional.pad(x, (0, pad_w, 0, pad_h), mode='reflect')
+
+        h = (H + pad_h) // 4
+        w = (W + pad_w) // 4
+        x = self.patch_embed(x)
+
+        # Stage 1
+        for blk in self.stage1:
+            x = blk(x, h, w)
+
+        # Merge
+        x_merge = x.view(B, h, w, -1)
+        if h % 2 or w % 2:
+            x_merge = nn.functional.pad(x_merge, (0,0,0,w%2,0,h%2))
+            
+        h_adj, w_adj = x_merge.shape[1], x_merge.shape[2]   # NEW
+
+        h_merge, w_merge = h_adj // 2, w_adj // 2
+        x_merge = torch.cat([
+            x_merge[:, 0::2, 0::2, :], x_merge[:, 1::2, 0::2, :],
+            x_merge[:, 0::2, 1::2, :], x_merge[:, 1::2, 1::2, :]
+        ], dim=-1).view(B, -1, 4 * self.embed_dim)
+        x_merge = self.merge(x_merge)
+
+        # Stage 2
+        for blk in self.stage2:
+            x_merge = blk(x_merge, h_merge, w_merge)
+
+        # Expand
+        x_expand = self.expand(x_merge).view(
+            B, h_merge, w_merge, 2, 2, self.embed_dim
+        ).permute(0,1,3,2,4,5).contiguous().view(
+            B, h_merge*2, w_merge*2, self.embed_dim
+        )                               # shape (B, H//4, W//4, C)
+        h2, w2 = h_merge * 2, w_merge * 2
+        
+        x_expand = x_expand.view(B, -1, self.embed_dim)   # (B, L, C)
+
+
+        # Stage 3
+        for blk in self.stage3:
+            x_expand = blk(x_expand, h2, w2)
+
+        x_expand = x_expand.view(B, h2, w2, self.embed_dim)\
+                           .permute(0, 3, 1, 2).contiguous()  # (B, C, H/4, W/4)
+        return x_expand
+
 
     def forward(self, x):
         B, C, H, W = x.shape
